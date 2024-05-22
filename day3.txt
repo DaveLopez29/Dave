@@ -5,7 +5,25 @@ r1 to r4: ospf 1:
 config t
  no router ospf 1
  do sh ip protocols
-
+##### give ip adress to s1 and s2
+@@s1
+config t
+int e1/0
+no shut
+ip add 192.168.1.133 255.255.255.254
+do bp
+ip route 0.0.0.0 0.0.0.0 192.168.1.129 1
+ip route 0.0.0.0 0.0.0.0 192.168.1.130 2
+do sh ip route static
+@@s2
+config t
+int e1/0
+no shut
+ip add 10.2.2.133 255.255.255.0
+do bp
+ip route 0.0.0.0 0.0.0.0 10.2.2.2 1
+ip route 0.0.0.0 0.0.0.0 10.2.2.1 2
+do sh ip route static
 R4
 config t
  no router eigrp 100
@@ -16,8 +34,15 @@ ip dhcp excluded-add 10.2.1.1 10.2.1.99
 ip dhcp excluded-add 10.2.1.200 10.2.1.254
 !
 ip dhcp pool vlan10
+ip dhcp pool vlan10
   network 10.2.1.0 255.255.255.0
   default-router 10.2.1.254
+#d1
+config t
+int e1/0
+ switchport mode access
+ switchport access vlan 200
+do sh vlan brief
 !
 D2:
 CONFIG T
@@ -28,6 +53,12 @@ ip dhcp pool vlan10
   network 10.2.1.0 255.255.255.0
   default-router 10.2.1.254
 !
+#d2
+config t
+int e1/0
+ switchport mode access
+ switchport access vlan 20
+do sh vlan brief
 A1: lipat vlan from v1 to v10
 config t
 int e0/0
